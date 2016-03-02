@@ -101,8 +101,9 @@ class ConanServerConfigParser(ConfigParser):
 
     @property
     def public_url(self):
-        protocol = "https" if self.ssl_enabled else "http"
-        port = ":%s" % self.public_port if self.public_port != 80 else ""
+        port_to_protocol = {80: "http", 443: "https"}
+        protocol = port_to_protocol.get(self.public_port, "https" if self.ssl_enabled else "http")
+        port = ":%s" % self.public_port if self.public_port not in port_to_protocol else ""
         return "%s://%s%s/v1" % (protocol, self.host_name, port)
 
     @property
